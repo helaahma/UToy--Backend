@@ -1,6 +1,7 @@
+
 from django.shortcuts import render
 from .models import Collectable, ProfileUser, BidOrder
-from .serializers import CollectableSerializer
+from .serializers import CollectableSerializer, UserCreateSerializer
 from rest_framework.generics import (RetrieveUpdateAPIView,ListAPIView, RetrieveAPIView,CreateAPIView, DestroyAPIView)
 from rest_framework.views import APIView
 from rest_framework.filters import (SearchFilter, OrderingFilter,)
@@ -8,9 +9,14 @@ from .models import Collectable, ProfileUser, BidOrder
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from django.http import Http404
+from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework import status
 
-# Create your views here.
+
+class UserCreateAPIView(CreateAPIView):
+    serializer_class = UserCreateSerializer
+
+
 class CollectableList(ListAPIView):
     queryset= Collectable.objects.all()
     serializer_class = CollectableSerializer
@@ -25,9 +31,5 @@ class CollectableDetails(RetrieveAPIView):
     permission_classes = [AllowAny]
     lookup_field='id'
     lookup_url_kwarg='collectable_id'
-
-
-
-
 
 

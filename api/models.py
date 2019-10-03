@@ -17,6 +17,9 @@ class Collectable(models.Model):
 	special_features = models.CharField(max_length=500, blank=True)
 	owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="collectables")
 	desired_price = models.IntegerField(default=1)
+
+	def __str__(self):
+		return self.name
 	
 
 class ProfileUser(models.Model):
@@ -24,7 +27,8 @@ class ProfileUser(models.Model):
 	address = models.TextField(max_length=250, blank=False)  
 	# Each bid has many users
 	# bid_order = models.Forginkey(BidOrder,on_delete=models.CASCADE, related_name="profiles")
-
+	def __str__(self):
+		return self.name
 
 class BidOrder(models.Model):
 	bid_item = models.OneToOneField(User,on_delete=models.CASCADE, related_name="bid_order")
@@ -32,6 +36,7 @@ class BidOrder(models.Model):
 	filled_price = models.IntegerField()
 	time = models.DateTimeField(auto_now=True)
 	status = models.BooleanField(default=True)
-
+	def __str__(self):
+		return self.name
 
 

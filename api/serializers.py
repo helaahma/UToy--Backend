@@ -30,7 +30,9 @@ class CollectableSerializer(serializers.ModelSerializer):
 		model = Collectable
 		exclude= ['owner']
 
- 
+# class SellRequestSerializer(serializers.ModelSerializer):
+#     collectable = CollectableSerializer()
+    
 
 
 

@@ -7,6 +7,7 @@ from django.dispatch import receiver
 
 # Create your models here.
 class Collectable(models.Model):
+	
 	item = models.CharField(max_length=60, blank=False)
 	group = models.CharField(max_length=70, blank=False)
 	description = models.TextField(max_length=500, blank=False)

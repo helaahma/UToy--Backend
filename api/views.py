@@ -43,7 +43,7 @@ class CreateSellRequest(CreateAPIView):
 
 class RequestUpdateView(RetrieveUpdateAPIView):
     queryset = Collectable.objects.all()
-    serializer_class = SellRequestSerializer
+    serializer_class = CollectableSerializer
     lookup_field = 'id'
     lookup_url_kwarg = 'sellrequest_id'
 

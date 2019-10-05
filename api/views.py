@@ -33,3 +33,18 @@ class CollectableDetails(RetrieveAPIView):
     lookup_url_kwarg='collectable_id'
 
 
+class CreateSellRequest(CreateAPIView):
+    serializer_class = CollectableSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user).data
+
+
+class RequestUpdateView(RetrieveUpdateAPIView):
+    queryset = Collectable.objects.all()
+    serializer_class = SellRequestSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'sellrequest_id'
+
+

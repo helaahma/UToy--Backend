@@ -13,7 +13,8 @@ class Collectable(models.Model):
 	description = models.TextField(max_length=500, blank=False)
 	image = models.ImageField(null=False, blank=False)
 	#condition for box
-	condition = models.CharField(max_length=70, blank=True)
+	conditions= [('new','new'),('used','used')]
+	condition = models.CharField(max_length=4, choices=conditions, blank=False, default='new')
 	# color=
 	special_features = models.CharField(max_length=500, blank=True)
 	owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="collectables")

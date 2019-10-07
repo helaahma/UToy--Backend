@@ -26,12 +26,15 @@ class UserCreateSerializer(serializers.ModelSerializer):
 
 
 class CollectableSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = Collectable
-		exclude= ['owner']
+    class Meta:
+        model = Collectable
+        exclude= ['owner']
 
-# class SellRequestSerializer(serializers.ModelSerializer):
-#     collectable = CollectableSerializer()
+
+# class CartSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Cart
+#         exclude= ['user']
     
 
 

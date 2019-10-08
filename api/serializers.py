@@ -31,12 +31,21 @@ class CollectableSerializer(serializers.ModelSerializer):
         exclude= ['owner']
 
 
-# class CartSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Cart
-#         exclude= ['user']
-    
+class OnGoingBidsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BidOrder
+        exclude= ["bidder"]
 
+
+class BidSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BidOrder
+        fields= ['filled_price']
+    
+class BidUpdateSerializer(serializers.ModelSerializer):
+        class Meta:
+            model = BidOrder
+            fields= ['filled_price']
 
 
 

@@ -40,12 +40,8 @@ class OnGoingBidsSerializer(serializers.ModelSerializer):
 class BidSerializer(serializers.ModelSerializer):
     class Meta:
         model = BidOrder
-        fields= ['filled_price']
+        fields= ['price']
     
-class BidUpdateSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = BidOrder
-            fields= ['filled_price']
 
 
 

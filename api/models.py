@@ -33,11 +33,10 @@ class ProfileUser(models.Model):
 
 
 class BidOrder(models.Model):
-    bid_item = models.OneToOneField(Collectable,on_delete=models.CASCADE, related_name="bid_order")
+    collectable = models.ForeignKey(Collectable,on_delete=models.CASCADE, related_name="bid_order")
     bidder = models.ForeignKey(User,on_delete=models.CASCADE, related_name="user", null=True)
-    filled_price = models.IntegerField(null=True)
+    price = models.IntegerField(null=True)
     time = models.DateTimeField(auto_now_add=True)
-    status = models.BooleanField(default=True)
     def __str__(self):
         return str(self.bid_item)
 

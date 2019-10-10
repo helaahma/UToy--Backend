@@ -11,7 +11,7 @@ class Collectable(models.Model):
     item = models.CharField(max_length=60, blank=False)
     group = models.CharField(max_length=70, blank=False)
     description = models.TextField(max_length=500, blank=False)
-    image = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True, upload_to="pics/")
     #condition for box
     conditions= [('new','new'),('used','used')]
     condition = models.CharField(max_length=4, choices=conditions, blank=False, default='new')
@@ -38,7 +38,7 @@ class BidOrder(models.Model):
     price = models.IntegerField(null=True)
     time = models.DateTimeField(auto_now_add=True)
     def __str__(self):
-        return str(self.bid_item)
+        return str(self.collectable)
 
 
 # 

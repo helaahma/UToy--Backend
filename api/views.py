@@ -78,7 +78,8 @@ class BidView(APIView):
         ).exists()
         if not highest_bid:
             bid, _ = BidOrder.objects.get_or_create(bidder = self.request.user, collectable=collectable)
-            bid.price = request.data['price']   
+            bid.price = request.data['price']
+            bid.save()   
             return Response(status=HTTP_200_OK)
         else:
             return Response(status=HTTP_400_BAD_REQUEST)

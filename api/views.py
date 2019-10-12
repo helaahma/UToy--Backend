@@ -1,7 +1,7 @@
 
 from django.shortcuts import render
 from .models import Collectable, ProfileUser, BidOrder
-from .serializers import OnGoingBidsSerializer, BidSerializer, CollectableSerializer, UserCreateSerializer
+from .serializers import CollectableDetailSerializer,OnGoingBidsSerializer, BidSerializer, CollectableSerializer, UserCreateSerializer
 from rest_framework.generics import (RetrieveUpdateAPIView,ListAPIView, RetrieveAPIView,CreateAPIView, DestroyAPIView)
 from rest_framework.views import APIView
 from rest_framework.filters import (SearchFilter, OrderingFilter,)
@@ -28,7 +28,7 @@ class CollectableList(ListAPIView):
 
 class CollectableDetails(RetrieveAPIView):
     queryset= Collectable.objects.all()
-    serializer_class = CollectableSerializer
+    serializer_class = CollectableDetailSerializer
     permission_classes = [AllowAny]
     lookup_field='id'
     lookup_url_kwarg='collectable_id'

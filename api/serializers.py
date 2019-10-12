@@ -25,16 +25,36 @@ class UserCreateSerializer(serializers.ModelSerializer):
         return validated_data
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username','email', 'first_name','last_name','last_login','date_joined']
+
+
 class CollectableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collectable
-        exclude= ['owner']
+        exclude = ['owner']
+
+
+
 
 
 class OnGoingBidsSerializer(serializers.ModelSerializer):
     class Meta:
         model = BidOrder
-        exclude= ["bidder"]
+        fields= ['id','collectable', 'price', 'time']
+
+
+class CollectableDetailSerializer(serializers.ModelSerializer):
+    owner = UserSerializer()
+    bid_order= serializers.SerializerMethodField()
+    class Meta:
+        model = Collectable
+        fields=['id', 'bid_order','item', 'group', 'description', 'image', 'condition', 'special_features', 'desired_price', 'available','owner']
+    def get_bid_order(self, obj):
+        bid_order= BidOrder.objects.filter(collectable=obj)
+        return OnGoingBidsSerializer(bid_order, many=True).data
 
 
 class BidSerializer(serializers.ModelSerializer):

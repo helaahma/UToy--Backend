@@ -74,15 +74,17 @@ class BidView(APIView):
     def post(self, request, collectable_id):
         collectable = Collectable.objects.get(id=collectable_id)
         highest_bid = BidOrder.objects.filter(
-            collectable=collectable, price__gt=request.data['price']
+            collectable=collectable, price__gte=int(request.data['price'])
         ).exists()
         if not highest_bid:
+            print("highest bid")
             bid, _ = BidOrder.objects.get_or_create(bidder = self.request.user, collectable=collectable)
             bid.price = request.data['price']
-            bid.save()   
+            bid.save()
             return Response(status=HTTP_200_OK)
         else:
-            return Response(status=HTTP_400_BAD_REQUEST)
+            highest = collectable.bid_order.all().order_by('-price').first()
+            return Response({"highest_bid":highest.price}, status=HTTP_400_BAD_REQUEST)
         
 
 

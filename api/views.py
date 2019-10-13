@@ -77,14 +77,29 @@ class BidView(APIView):
             collectable=collectable, price__gte=int(request.data['price'])
         ).exists()
         if not highest_bid:
-            print("highest bid")
-            bid, _ = BidOrder.objects.get_or_create(bidder = self.request.user, collectable=collectable)
+            bid, _ = BidOrder.objects.get_or_create(collectable=collectable)
             bid.price = request.data['price']
+            bid.bidder = self.request.user
             bid.save()
             return Response(status=HTTP_200_OK)
         else:
             highest = collectable.bid_order.all().order_by('-price').first()
             return Response({"highest_bid":highest.price}, status=HTTP_400_BAD_REQUEST)
+
+
+class ApproveFinalBidToSellView(APIView):
+    permission_classes = [IsOwner]
+    def get (self, request, collectable_id,format = None):
+        collectable = Collectable.objects.get(id=collectable_id)
+        collectable.available = False
+        collectable.save()
+        bid_closing = BidOrder.objects.get(collectable=collectable)
+        bid_closing.status = False
+        bid_closing.save()
+        return Response({"sell_request": bid_closing.price},status=HTTP_200_OK)
+
+
+
         
 
 

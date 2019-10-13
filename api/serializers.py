@@ -8,9 +8,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=None, min_length=None, allow_blank=False)
     first_name = serializers.CharField(max_length=10, min_length=None, allow_blank=False)
     last_name = serializers.CharField(max_length=10, min_length=None, allow_blank=False)
+    address = serializers.CharField(max_length=250)
+    
     class Meta:
         model = User
-        fields = ['username', 'password','email', 'first_name','last_name']
+        fields = ['username', 'password','email', 'first_name','last_name','address']
 
     def create(self, validated_data):
 
@@ -22,6 +24,8 @@ class UserCreateSerializer(serializers.ModelSerializer):
         new_user = User(username=username, first_name=first_name, last_name=last_name, email=email)
         new_user.set_password(password)
         new_user.save()
+        adress = validated_data['address']
+        ProfileUser.objects.create(user=new_user, address=address)
         return validated_data
 
 
@@ -31,13 +35,26 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['username','email', 'first_name','last_name','last_login','date_joined']
 
 
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    # we did use the ProfileUser Model as we are required to refer to the specific fields within that assigned model. 
+    # Therefore, we utilized the above (UserSerializer) because of the existence of the needed fields
+    class Meta:
+        model = ProfileUser
+        fields = ['address','user']
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    user = ProfileSerializer()
+    class Meta:
+        model = ProfileUser
+        fields = ['address','user','email']
+
+
 class CollectableSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collectable
         exclude = ['owner']
-
-
-
 
 
 class OnGoingBidsSerializer(serializers.ModelSerializer):

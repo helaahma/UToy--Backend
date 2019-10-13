@@ -14,5 +14,6 @@ path('sellrequest/update/<int:sellrequest_id>/', RequestUpdateView.as_view(), na
 path('bid/list/', OnGoingBidsList.as_view(), name='bid-list'),
 path('bid/detail/<int:bid_id>/', OnGoingBidDetail.as_view(), name='bid-detail'),
 path('bid/<int:collectable_id>/', BidView.as_view(), name='bid-create'),
+# path('bid/<int:collectable_id>/', BidView.as_view(), name='bid-create'),
 ]
 

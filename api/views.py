@@ -1,9 +1,8 @@
-
 from django.shortcuts import render
 from .models import Collectable, ProfileUser, BidOrder
-from .serializers import CollectableDetailSerializer,OnGoingBidsSerializer, BidSerializer, CollectableSerializer, UserCreateSerializer
+from .serializers import CollectableDetailSerializer,OnGoingBidsSerializer, BidSerializer, CollectableSerializer, UserCreateSerializer, ProfileSerializer, ProfileUpdateSerializer
 from rest_framework.generics import (RetrieveUpdateAPIView,ListAPIView, RetrieveAPIView,CreateAPIView, DestroyAPIView)
-from rest_framework.views import APIView
+from rest_framework.views import APIView 
 from rest_framework.filters import (SearchFilter, OrderingFilter,)
 from .models import Collectable, ProfileUser, BidOrder
 from rest_framework.permissions import (IsAuthenticated, AllowAny, IsAdminUser,)
@@ -18,6 +17,28 @@ class UserCreateAPIView(CreateAPIView):
     serializer_class = UserCreateSerializer
 
 
+class UserProfile(RetrieveAPIView):
+    queryset = ProfileUser.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = [IsOwner]
+    lookup_field = 'user'
+    lookup_url_kwarg = 'user_username'
+
+
+class UserProfileUpdate(RetrieveUpdateAPIView):
+    serializer_class = ProfileUpdateSerializer
+    permission_classes = [IsOwner]
+    lookup_field = 'user'
+    lookup_url_kwarg = 'user_username'
+
+
+class CreateSellRequest(CreateAPIView):
+    serializer_class = CollectableSerializer
+    permission_classes = [IsAuthenticated]
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
 class CollectableList(ListAPIView):
     queryset= Collectable.objects.filter(available=True)
     serializer_class = CollectableSerializer
@@ -27,11 +48,11 @@ class CollectableList(ListAPIView):
 
 
 class CollectableDetails(RetrieveAPIView):
-    queryset= Collectable.objects.all()
+    queryset = Collectable.objects.all()
     serializer_class = CollectableDetailSerializer
     permission_classes = [AllowAny]
-    lookup_field='id'
-    lookup_url_kwarg='collectable_id'
+    lookup_field ='id'
+    lookup_url_kwarg ='collectable_id'
 
 
 class DeleteCollectable(DestroyAPIView):
@@ -39,13 +60,6 @@ class DeleteCollectable(DestroyAPIView):
     lookup_field = 'id'
     lookup_url_kwarg = 'collectable_id'
     permission_classes = [IsAdminUser, IsOwner]
-
-
-class CreateSellRequest(CreateAPIView):
-    serializer_class = CollectableSerializer
-    permission_classes = [IsAuthenticated]
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
 
 
 class RequestUpdateView(RetrieveUpdateAPIView):
@@ -78,8 +92,9 @@ class BidView(APIView):
         ).exists()
         if not highest_bid:
             print("highest bid")
-            bid, _ = BidOrder.objects.get_or_create(bidder = self.request.user, collectable=collectable)
+            bid, _ = BidOrder.objects.get_or_create(collectable=collectable)
             bid.price = request.data['price']
+            bid.bidder = self.request.user
             bid.save()
             return Response(status=HTTP_200_OK)
         else:

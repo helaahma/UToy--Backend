@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import (OnGoingBidDetail,OnGoingBidsList,BidView, CreateSellRequest,RequestUpdateView,DeleteCollectable,CollectableList, CollectableDetails, UserCreateAPIView)
+from .views import (OnGoingBidDetail,OnGoingBidsList,BidView, CreateSellRequest,RequestUpdateView,DeleteCollectable,CollectableList, CollectableDetails, UserCreateAPIView, UserProfile, UserProfileUpdate  )
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 
@@ -14,6 +14,8 @@ path('sellrequest/update/<int:sellrequest_id>/', RequestUpdateView.as_view(), na
 path('bid/list/', OnGoingBidsList.as_view(), name='bid-list'),
 path('bid/detail/<int:bid_id>/', OnGoingBidDetail.as_view(), name='bid-detail'),
 path('bid/<int:collectable_id>/', BidView.as_view(), name='bid-create'),
-# path('bid/<int:collectable_id>/', BidView.as_view(), name='bid-create'),
+path('userprofile/', UserProfile.as_view(), name='user-profile'),
+path('userprofileupdate/', UserProfileUpdate.as_view(), name='user-profile-update'),
 ]
 
+# <slug:user_username>/

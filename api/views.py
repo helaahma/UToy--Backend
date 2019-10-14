@@ -18,19 +18,16 @@ class UserCreateAPIView(CreateAPIView):
 
 
 class UserProfile(RetrieveAPIView):
-    queryset = ProfileUser.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [IsOwner]
-    lookup_field = 'user'
-    lookup_url_kwarg = 'user_username'
+    def get_object(self):
+        return self.request.user.profile
+
 
 
 class UserProfileUpdate(RetrieveUpdateAPIView):
     serializer_class = ProfileUpdateSerializer
     permission_classes = [IsOwner]
-    lookup_field = 'user'
-    lookup_url_kwarg = 'user_username'
-
+    
 
 class CreateSellRequest(CreateAPIView):
     serializer_class = CollectableSerializer

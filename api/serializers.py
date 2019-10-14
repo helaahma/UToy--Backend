@@ -24,7 +24,7 @@ class UserCreateSerializer(serializers.ModelSerializer):
         new_user = User(username=username, first_name=first_name, last_name=last_name, email=email)
         new_user.set_password(password)
         new_user.save()
-        adress = validated_data['address']
+        address = validated_data['address']
         ProfileUser.objects.create(user=new_user, address=address)
         return validated_data
 
@@ -41,7 +41,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     # Therefore, we utilized the above (UserSerializer) because of the existence of the needed fields
     class Meta:
         model = ProfileUser
-        fields = ['address','user']
+        fields = ['user','address']
 
 
 class ProfileUpdateSerializer(serializers.ModelSerializer):

@@ -61,6 +61,7 @@ class BidSerializer(serializers.ModelSerializer):
     class Meta:
         model = BidOrder
         fields= ['price']
+
     
 
 

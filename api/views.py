@@ -12,6 +12,10 @@ from django.http import Http404
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework import status
 from .permissions import IsOwner, IsNotOwner
+from rest_framework.renderers import TemplateHTMLRenderer
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+
 
 
 class UserCreateAPIView(CreateAPIView):
@@ -87,8 +91,17 @@ class BidView(APIView):
             return Response({"highest_bid":highest.price}, status=HTTP_400_BAD_REQUEST)
 
 
+
 class ApproveFinalBidToSellView(APIView):
+    renderer_classes = [TemplateHTMLRenderer]
+    template_name = 'sell_request.html'
     permission_classes = [IsOwner]
+    def send_email(self, owner_email,collectable_id):
+        html_message = render_to_string('sell_request.html', {'id': collectable_id})
+        email = send_mail(
+            'Sell Requiste Status', 'plain',
+            'demorejoycoded@gmail.com', [owner_email],fail_silently=False, html_message=html_message)
+        # email.send()
     def get (self, request, collectable_id,format = None):
         collectable = Collectable.objects.get(id=collectable_id)
         collectable.available = False
@@ -96,8 +109,11 @@ class ApproveFinalBidToSellView(APIView):
         bid_closing = BidOrder.objects.get(collectable=collectable)
         bid_closing.status = False
         bid_closing.save()
+        if collectable.desired_price <= bid_closing.price:
+            owner_email = collectable.owner.email
+            self.send_email(owner_email, collectable.id)
         return Response({"sell_request": bid_closing.price},status=HTTP_200_OK)
-
+    # if get().
 
 
         

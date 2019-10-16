@@ -27,7 +27,6 @@ class UserProfile(RetrieveAPIView):
         return self.request.user.profile
 
 
-
 class UserProfileUpdate(RetrieveUpdateAPIView):
     serializer_class = ProfileUpdateSerializer
     permission_classes = [IsOwner]
@@ -86,45 +85,46 @@ class OnGoingBidDetail(RetrieveAPIView):
 
 class BidView(APIView):
     permission_classes = [IsAuthenticated]
-    def post(self, request, collectable_id):
-        collectable = Collectable.objects.get(id=collectable_id)
-        highest_bid = BidOrder.objects.filter(
-            collectable=collectable, price__gte=int(request.data['price'])
-        ).exists()
-        if not highest_bid:
-            bid, _ = BidOrder.objects.get_or_create(collectable=collectable)
-            bid.price = request.data['price']
-            bid.bidder = self.request.user
-            bid.save()
-            return Response(status=HTTP_200_OK)
-        else:
-            highest = collectable.bid_order.all().order_by('-price').first()
-            return Response({"highest_bid":highest.price}, status=HTTP_400_BAD_REQUEST)
-
-
-
-class ApproveFinalBidToSellView(APIView):
     renderer_classes = [TemplateHTMLRenderer]
     template_name = 'sell_request.html'
-    permission_classes = [IsOwner]
-    def send_email(self, owner_email,collectable_id):
-        html_message = render_to_string('sell_request.html', {'id': collectable_id})
+
+    def send_email(self, owner_email,collectable):
+        print(collectable)
+        html_message = render_to_string('sell_request.html', {'collectable': collectable, 'request':self.request})
         email = send_mail(
             'Sell Requiste Status', 'plain',
             'demorejoycoded@gmail.com', [owner_email],fail_silently=False, html_message=html_message)
-        # email.send()
-    def get (self, request, collectable_id,format = None):
+    def post(self, request, collectable_id):
+            collectable = Collectable.objects.get(id=collectable_id)
+            print(collectable)
+            highest_bid = BidOrder.objects.filter(
+                collectable=collectable, price__gte=int(request.data['price'])
+            ).exists()
+            if not highest_bid:
+                bid, _ = BidOrder.objects.get_or_create(collectable=collectable)
+                bid.price = request.data['price']
+                bid.bidder = self.request.user
+                bid.save()
+                owner_email = collectable.owner.email
+                print(owner_email)
+                print(collectable.id)
+                self.send_email(owner_email, collectable)
+                return Response(status=HTTP_200_OK)
+            else:
+                highest = collectable.bid_order.all().order_by('-price').first()
+                return Response({"highest_bid":highest.price}, status=HTTP_400_BAD_REQUEST)
+
+class ApproveFinalBidToSellView(APIView):
+    permission_classes = [IsOwner]
+    
+    def get (self, request, collectable_id, format = None):
         collectable = Collectable.objects.get(id=collectable_id)
         collectable.available = False
         collectable.save()
         bid_closing = BidOrder.objects.get(collectable=collectable)
         bid_closing.status = False
         bid_closing.save()
-        if collectable.desired_price <= bid_closing.price:
-            owner_email = collectable.owner.email
-            self.send_email(owner_email, collectable.id)
         return Response({"sell_request": bid_closing.price},status=HTTP_200_OK)
-    # if get().
 
 
         

@@ -4,6 +4,7 @@ from .views import (ApproveFinalBidToSellView, OnGoingBidDetail,OnGoingBidsList,
 
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+app_name = "api"
 
 urlpatterns=[
 path('login/', TokenObtainPairView.as_view() , name='login'),
@@ -16,7 +17,7 @@ path('sellrequest/update/<int:sellrequest_id>/', RequestUpdateView.as_view(), na
 path('bid/list/', OnGoingBidsList.as_view(), name='bid-list'),
 path('bid/detail/<int:bid_id>/', OnGoingBidDetail.as_view(), name='bid-detail'),
 path('bid/<int:collectable_id>/', BidView.as_view(), name='bid-create'),
-path('approve/sell/<int:collectable_id>/', ApproveFinalBidToSellView.as_view(), name='approve-sell')
+path('approve/sell/<int:collectable_id>/', ApproveFinalBidToSellView.as_view(), name='approve-sell'),
 path('userprofile/', UserProfile.as_view(), name='user-profile'),
 path('userprofileupdate/', UserProfileUpdate.as_view(), name='user-profile-update'),
 ]
